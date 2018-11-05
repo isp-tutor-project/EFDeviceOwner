@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.edforge.efdeviceowner.SlaveModeView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D5E9FD">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:id="@+id/SnavBG"
+            android:layout_width="1734px"
+            android:layout_height="1047px"
+            android:background="@drawable/nav_bg_none" />
+
+        <Button
+            android:id="@+id/bHome"
+            android:layout_width="110px"
+            android:layout_height="110px"
+            android:layout_marginStart="15px"
+            android:layout_marginTop="15px"
+            android:background="@drawable/button_home"
+            android:text=""/>
+
+        <TextView
+            android:id="@+id/Sstatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="25dp"
+            android:text="Unknown Owner"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/SslaveStatus"
+                android:layout_width="452dp"
+                android:layout_height="254dp"
+                android:gravity="top|left"
+                android:scrollbars="vertical"
+                android:layout_margin="16dp"
+                android:text="SlaveStatus"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</org.edforge.efdeviceowner.SlaveModeView>

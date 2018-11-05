@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.edforge.efdeviceowner.DeviceOwnerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D5E9FD">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:id="@+id/SnavBG"
+            android:layout_width="1734px"
+            android:layout_height="1047px"
+            android:background="@drawable/nav_bg_none" />
+
+        <TextView
+            android:id="@+id/Sstatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="5dp"
+            android:text="Unknown Owner"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/SsettingsButton"
+
+            android:layout_gravity="left|top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginRight="3dp"
+            android:text="Launch Settings" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/SsetupMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Setup Device"
+                android:padding="30dp"
+                android:textColor="@android:color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/SslaveMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Slave Mode"
+                android:padding="30dp"
+                android:textColor="@android:color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/SuserMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="User Mode"
+                android:padding="30dp"
+                android:textColor="@android:color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/Stitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_margin="20dp"
+                    android:text="EdForge System Manager"
+                    android:textSize="50sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="top|left"
+                android:orientation="horizontal">
+
+
+                <!--<Button-->
+                    <!--android:id="@+id/SEFhomeButton"-->
+
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_margin="5dp"-->
+
+                    <!--android:layout_marginRight="3dp"-->
+                    <!--android:text="EdForge Home" />-->
+
+                <!--<Button-->
+                    <!--android:id="@+id/SASUShomeButton"-->
+
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_margin="5dp"-->
+                    <!--android:layout_height="wrap_content"-->
+
+                    <!--android:layout_marginRight="3dp"-->
+                    <!--android:text="ASUS Home" />-->
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/SbreakOut"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+
+                android:layout_marginRight="3dp"
+                android:background="@android:color/holo_blue_dark"
+                android:padding="10dp"
+                android:text="Break Out" />
+
+            <Button
+                android:id="@+id/SbootButton"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+
+                android:layout_marginRight="3dp"
+                android:padding="10dp"
+                android:background="@android:color/holo_orange_dark"
+                android:text="Reboot Device" />
+
+            <Button
+                android:id="@+id/SwipeButton"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+
+                android:layout_marginRight="3dp"
+                android:padding="10dp"
+                android:text="Wipe Device"
+                android:background="#ff0000"/>
+
+        </LinearLayout>
+
+
+    </FrameLayout>
+
+
+
+</org.edforge.efdeviceowner.DeviceOwnerView>
