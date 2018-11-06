@@ -80,19 +80,24 @@ public class LauncherManager {
      */
     public void setPreferredLauncher(String launcherID) {
 
-        if(loadPersistentPreferredLauncher() != null)
-                                    clearPreferredLauncher();
-
         ComponentName componentName = (ComponentName) launcherMap.get(launcherID);
 
-        IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
-        filter.addCategory(Intent.CATEGORY_HOME);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        String currLauncher = loadPersistentPreferredLauncher();
 
-        mDevicePolicyManager.addPersistentPreferredActivity(
-                DeviceOwnerReceiver.getComponentName(mContext), filter, componentName);
+        if(currLauncher != componentName.getPackageName()) {
 
-        savePersistentPreferredLauncher(componentName.getPackageName());
+            if (currLauncher != null)
+                clearPreferredLauncher();
+
+            IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
+            filter.addCategory(Intent.CATEGORY_HOME);
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+
+            mDevicePolicyManager.addPersistentPreferredActivity(
+                    DeviceOwnerReceiver.getComponentName(mContext), filter, componentName);
+
+            savePersistentPreferredLauncher(componentName.getPackageName());
+        }
     }
 
 

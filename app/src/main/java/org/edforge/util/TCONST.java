@@ -20,6 +20,8 @@ package org.edforge.util;
 
 // global tutor constants
 
+import android.content.Intent;
+
 public class TCONST {
 
     public static final String EDFORGE_NETID          = "EdForge";
@@ -80,22 +82,19 @@ public class TCONST {
     public static final String SYSTEM_STATUS        = "SYSTEM_STATUS";
     public static final String SLAVE_MODE           = "SLAVE_MODE";
     public static final String USER_MODE            = "USER_MODE";
+    public static final String FINISH_APP           = "FINISH_APP";
 
     public static final String LAUNCH_SETTINGS      = "LAUNCH_SETTINGS";
     public static final String SET_HOME_APP         = "SET_HOME_APP";
 
     public static final String REQ_REBOOT_DEVICE    = "REQ_REBOOT_DEVICE";
     public static final String REQ_WIPE_DEVICE      = "REQ_WIPE_DEVICE";
+    public static final String REQ_ANDROID_BREAKOUT = "REQ_ANDROID_BREAKOUT";
 
     public static final String REASON               = "REASON";
     public static final String BREAK_OUT            = "BREAK_OUT";
     public static final String REBOOT_DEVICE        = "REBOOT_DEVICE";
     public static final String WIPE_DEVICE          = "WIPE_DEVICE";
-
-    public static final String ASUSDEF_LAUNCHER     = "default";
-    public static final String EFOWNER_LAUNCHER     = "efOwner";
-    public static final String EFHOME_LAUNCHER      = "efHome";
-
 
     public static final String NAME_FIELD           = "NAME_FIELD";
     public static final String INT_FIELD            = "INT_FIELD";
@@ -106,5 +105,18 @@ public class TCONST {
     public static final String NET_STATUS           = "NET_STATUS";
     public static final String SETUP_MODE           = "SETUP_MODE";
     public static final String COMMAND_MODE         = "COMMAND_MODE";
+
+    public static final String EFOWNER_LAUNCH_INTENT  = "org.edforge.EF_DEVICE_OWNER";
+    public static final String EFHOME_LAUNCH_INTENT   = "org.edforge.EF_HOME_SCREEN";
+    public static final String EFHOST_LAUNCH_INTENT   = "org.edforge.EF_ANDROID_HOST";
+    public static final String LAUNCH_HOME            = Intent.ACTION_MAIN;
+
+    public static final String EFOWNER_PACKAGE = "org.edforge.efdeviceowner";
+    public static final String EFHOME_PACKAGE  = "org.edforge.efhomescreen";
+    public static final String EFHOST_PACKAGE  = "org.edforge.androidhost";
+
+    public static final String ASUSDEF_LAUNCHER     = "default";
+    public static final String EFOWNER_LAUNCHER     = "efOwner";
+    public static final String EFHOME_LAUNCHER      = "efHome";
 
 }

@@ -13,13 +13,14 @@ import org.json.JSONObject;
 public class CEF_Command implements ILoadableObject {
 
     // json loadable
-    public String command;
-    public String to;
-    public String from;
-    public Boolean recurse;
-    public long             size;
-    public Boolean compress;
-    public Boolean extract;
+    public String   command;
+    public String   app_package;
+    public String   to;
+    public String   from;
+    public Boolean  recurse;
+    public long     size;
+    public Boolean  compress;
+    public Boolean  extract;
 
 
     @Override

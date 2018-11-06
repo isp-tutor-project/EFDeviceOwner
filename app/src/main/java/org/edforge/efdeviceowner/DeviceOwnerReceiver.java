@@ -47,7 +47,7 @@ public class DeviceOwnerReceiver extends DeviceAdminReceiver {
         mProvisioner = new PostProvisioning(context);
 
         if (!mProvisioner.performPostProvisioningOperations(intent)) {
-            showToast(context, "Post Provisioning Failed");
+            showToast(context, "Post Provisioning Failed = EdForge");
             return;
         }
 
@@ -63,19 +63,14 @@ public class DeviceOwnerReceiver extends DeviceAdminReceiver {
         context.startActivity(launch);
     }
 
-    /**
-     * @return A newly instantiated {@link android.content.ComponentName} for this
-     * DeviceAdminReceiver.
-     */
-    public static ComponentName getComponentName(Context context) {
-        return new ComponentName(context.getApplicationContext(), DeviceOwnerReceiver.class);
-    }
-
     void showToast(Context context, String msg) {
         String status = "Admin State Change:" + msg;
         Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     *  This is called even when owner is set via adb
+     */
     @Override
     public void onEnabled(Context context, Intent intent) {
 
@@ -102,6 +97,14 @@ public class DeviceOwnerReceiver extends DeviceAdminReceiver {
 
         super.onPasswordChanged(context, intent);
         showToast(context, "Password Changed");
+    }
+
+    /**
+     * @return A newly instantiated {@link android.content.ComponentName} for this
+     * DeviceAdminReceiver.
+     */
+    public static ComponentName getComponentName(Context context) {
+        return new ComponentName(context.getApplicationContext(), DeviceOwnerReceiver.class);
     }
 
 }

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import org.edforge.util.TCONST;
 
 import static org.edforge.util.TCONST.LAUNCH_SETTINGS;
+import static org.edforge.util.TCONST.REQ_ANDROID_BREAKOUT;
 import static org.edforge.util.TCONST.REQ_REBOOT_DEVICE;
 import static org.edforge.util.TCONST.REQ_WIPE_DEVICE;
 import static org.edforge.util.TCONST.SETUP_MODE;
@@ -39,6 +40,7 @@ public class DeviceOwnerView extends FrameLayout {
     private Button          SsettingsButton;
     private Button          SEFhomeButton;
     private Button          SASUShomeButton;
+    private Button          SbreakOutButton;
     private Button          SbootButton;
 
     private LocalBroadcastManager   bManager;
@@ -89,6 +91,13 @@ public class DeviceOwnerView extends FrameLayout {
         super.onFinishInflate();
 
         Sstatus = (TextView) findViewById(R.id.Sstatus);
+
+        SbreakOutButton = (Button) findViewById(R.id.SbreakButton);
+        SbreakOutButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                broadcast(REQ_ANDROID_BREAKOUT);
+            }
+        });
 
         SsetupMode = (Button) findViewById(R.id.SsetupMode);
         SsetupMode.setOnClickListener(new View.OnClickListener() {

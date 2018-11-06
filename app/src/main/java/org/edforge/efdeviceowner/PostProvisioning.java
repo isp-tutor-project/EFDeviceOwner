@@ -52,6 +52,7 @@ import static org.edforge.util.TCONST.EFOWNER_LAUNCHER;
  * </ul>
  */
 public class PostProvisioning {
+
     private static final String TAG                 = "PostProvisioningTask";
     private static final String POST_PROV_PREFS     = "post_prov_prefs";
     private static final String KEY_POST_PROV_DONE  = "key_post_prov_done";
@@ -77,11 +78,7 @@ public class PostProvisioning {
         }
         markPostProvisioningDone();
 
-        // From M onwards, permissions are not auto-granted, so we need to manually grant
-        // permissions for TestDPC.
-        if (Util.isAtLeastM()) {
-            autoGrantRequestedPermissionsToSelf();
-        }
+        autoGrantRequestedPermissionsToSelf();
 
         mLauncherManager.setPreferredLauncher(EFOWNER_LAUNCHER);
         mLauncherManager.clearPreferredLauncherByID(ASUSDEF_LAUNCHER);
@@ -137,6 +134,27 @@ public class PostProvisioning {
             }
         }
     }
+
+    public void autoGrantRequestedPermissionsToPackage(String packageName) {
+
+        ComponentName adminComponentName = getComponentName(mContext);
+
+        List<String> permissions = getRuntimePermissions(mContext.getPackageManager(), packageName);
+
+        for (String permission : permissions) {
+
+            boolean success = mDevicePolicyManager.setPermissionGrantState(adminComponentName,
+                    packageName, permission, PERMISSION_GRANT_STATE_GRANTED);
+
+            if (success) {
+                Log.d(TAG, "Auto-granting: " + permission + ", success");
+            }
+            else {
+                Log.e(TAG, "Failed to auto grant permission to self: " + permission);
+            }
+        }
+    }
+
 
     private List<String> getRuntimePermissions(PackageManager packageManager, String packageName) {
         List<String> permissions = new ArrayList<>();

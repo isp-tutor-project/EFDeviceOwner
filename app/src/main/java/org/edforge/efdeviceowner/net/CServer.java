@@ -307,7 +307,7 @@ public class CServer {
 
                                 case TCONST.PUSH:
                                 case TCONST.INSTALL:
-                                    broadcast(NET_STATUS, "Processing: " + mCommand.command + " : " + mCommand.to + "/" + mCommand.from);
+                                    broadcast(NET_STATUS, "Processing: " + mCommand.command + " : " + mCommand.to );
                                     break;
 
 

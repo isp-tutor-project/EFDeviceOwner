@@ -5,6 +5,8 @@ import android.os.Environment;
 import android.util.Log;
 
 import org.edforge.efdeviceowner.OwnerActivity;
+import org.edforge.efdeviceowner.PackageUpdater;
+import org.edforge.efdeviceowner.PostProvisioning;
 import org.edforge.efdeviceowner.Zip;
 import org.edforge.util.TCONST;
 
@@ -23,8 +25,12 @@ import java.io.OutputStream;
 
 public class CCommandProcessor {
 
-    private Context mContext;
+    private Context             mContext;
+    private PackageUpdater      mPackageUpdater;
+    private PostProvisioning    mPostProvisioning;
+
     private CEF_Command mCommand;
+
     private Zip         mZip;
     private String      mOutPath;
     private String      mTmpPath;
@@ -46,7 +52,9 @@ public class CCommandProcessor {
 
     public CCommandProcessor(Context context) {
 
-        mContext = context;
+        mContext          = context;
+        mPackageUpdater   = new PackageUpdater(mContext);
+        mPostProvisioning = new PostProvisioning(mContext);
     }
 
 
@@ -137,14 +145,12 @@ public class CCommandProcessor {
 
         int result = TCONST.COMMAND_WAIT;
 
-        mOutPath = validatePath(joinPath(Environment.getExternalStorageDirectory().getAbsolutePath(), mCommand.to));
-
         try {
             if(mCommand.extract) {
                 mTmpPath = cleanTempPath();
             }
             else {
-                mTmpPath = joinPath(mOutPath, mCommand.from);
+                mTmpPath = joinPath(Environment.getExternalStorageDirectory().getAbsolutePath(), mCommand.to);
             }
 
             outputStream  = new FileOutputStream(mTmpPath);
@@ -187,9 +193,22 @@ public class CCommandProcessor {
 
                 if(mCommand.extract) {
 
+                    mOutPath = joinPath(Environment.getExternalStorageDirectory().getAbsolutePath(), mCommand.to);
+
+                    Log.i(TAG, "Extracting Data");
                     mZip = new Zip(mContext);
                     mZip.open(mTmpPath);
                     mZip.extractAll(mTmpPath, mOutPath);
+                }
+
+                if(mCommand.app_package != null && mCommand.command.equals(TCONST.INSTALL)) {
+
+                    Log.i(TAG, "Installing Package");
+                    mPackageUpdater.updatePackage(mTmpPath);
+                    Log.i(TAG, "Setting Permissions");
+
+                    mPostProvisioning.autoGrantRequestedPermissionsToPackage(mCommand.app_package);
+                    Log.i(TAG, "Package Installed");
                 }
                 result = TCONST.COMMAND_WAIT;
             }
