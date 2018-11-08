@@ -58,6 +58,7 @@ public class CServer {
 
     public int serverState = TCONST.START_STATE;
 
+    private Thread      mClientThread;
     private CEF_Command mCommand = new CEF_Command();
     private String ip;
 
@@ -92,6 +93,10 @@ public class CServer {
 
         try {
             if((serverSocket != null) && serverSocket.isBound()) {
+
+                if(mClientThread != null)
+                    mClientThread.interrupt();
+
                 serverSocket.close();
             }
         } catch (IOException e) {
@@ -131,10 +136,13 @@ public class CServer {
                     broadcast(NET_STATUS, "connected");
 
                     CommunicationThread commThread = new CommunicationThread(socket);
-                    new Thread(commThread).start();
+
+                    mClientThread = new Thread(commThread);
+                    mClientThread.start();
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+
+                    Thread.currentThread().interrupt();
                 }
             }
         }

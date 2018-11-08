@@ -246,7 +246,7 @@ public class CCommandProcessor {
 
         }
         else {
-            Log.e(TAG,"Unsupported" );
+            Log.e(TAG,"Unsupported Command: " + mCommand.command + " without compress!");
         }
 
         return result;

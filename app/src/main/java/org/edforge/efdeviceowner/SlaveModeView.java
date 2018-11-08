@@ -190,8 +190,8 @@ public class SlaveModeView extends FrameLayout implements IThreadComplete {
 
             if (vid == R.id.bHome) {
 
-//                if(mServer != null)
-//                    mServer.onStop();
+                if(mServer != null)
+                    mServer.onStop();
 //
 //                if(mClient != null)
 //                    mClient.onStop();

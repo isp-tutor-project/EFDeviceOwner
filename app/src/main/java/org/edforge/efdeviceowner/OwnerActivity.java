@@ -43,6 +43,8 @@ import android.widget.TextView;
 import org.edforge.efdeviceowner.net.CCommandProcessor;
 import org.edforge.util.TCONST;
 
+import java.util.List;
+
 import static android.app.ActivityManager.LOCK_TASK_MODE_LOCKED;
 import static android.app.ActivityManager.LOCK_TASK_MODE_NONE;
 import static android.app.ActivityManager.LOCK_TASK_MODE_PINNED;
@@ -69,11 +71,7 @@ import static org.edforge.util.TCONST.WIPE_DEVICE;
 
 public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
-    private static final String TAG = "OwnerActivity";
-
     private MasterContainer masterContainer;
-    private TextView        Sstatus;
-    private Intent          mIntent;
 
     private LocalBroadcastManager   bManager;
     private homeReceiver            bReceiver;
@@ -110,6 +108,9 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
     public final static String[] efPaths = {ASSET_FOLDER,UPDATE_FOLDER,LOG_PATH,DATA_PATH,XFER_PATH};
     public final static String[] taskLockPkgs = {EFOWNER_PACKAGE,EFHOME_PACKAGE,EFHOST_PACKAGE};
+
+    private static final String TAG = "OwnerActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,6 +188,10 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
             broadcast(SYSTEM_STATUS,"Google Owns Device");
         }
 
+//        Intent launchIntent = getIntent();
+//        Log.i(TAG, "DEVICEOWNER LAUNCH:" + launchIntent.getAction());
+//        Log.i(TAG, "mProvisioningManager: " + (mProvisioningManager == null? "NULL": "NOTNULL"));
+
         switchView(deviceOwnerView);
     }
 
@@ -245,7 +250,8 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
         if (mDevicePolicyManager.isDeviceOwnerApp(mPackage)) {
 
-            enterLockTask();
+            if(isAppOnForeground(this))
+                                enterLockTask();
         }
 
         ((View) masterContainer).setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
@@ -256,6 +262,22 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 
+
+
+    private boolean isAppOnForeground(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+        if (appProcesses == null) {
+            return false;
+        }
+        final String packageName = context.getPackageName();
+        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+            if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND && appProcess.processName.equals(packageName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void enterLockTask() {
 
@@ -449,8 +471,12 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
                     exitLockTask();
                     mLauncherManager.setPreferredLauncher(ASUSDEF_LAUNCHER);
-                    startActivity(getIntent(LAUNCH_HOME));
-//                    rebootDevice();
+
+                    Intent startMain = new Intent(Intent.ACTION_MAIN);
+                    startMain.addCategory(Intent.CATEGORY_HOME);
+
+                    startActivity(startMain);
+                    //                    rebootDevice();
                     finish();
                     break;
 
