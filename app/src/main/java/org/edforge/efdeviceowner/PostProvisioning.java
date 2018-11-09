@@ -106,13 +106,14 @@ public class PostProvisioning {
         return launch;
     }
 
-    private void markPostProvisioningDone() {
-        mSharedPrefs.edit().putBoolean(KEY_POST_PROV_DONE, true).commit();
-    }
 
     private boolean isPostProvisioningDone() {
         return mSharedPrefs.getBoolean(KEY_POST_PROV_DONE, false);
     }
+    private void markPostProvisioningDone() {
+        mSharedPrefs.edit().putBoolean(KEY_POST_PROV_DONE, true).commit();
+    }
+
 
     @TargetApi(Build.VERSION_CODES.M)
     private void autoGrantRequestedPermissionsToSelf() {

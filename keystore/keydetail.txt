@@ -1,0 +1,38 @@
+C:\Program Files\Android\Android Studio\jre\jre\bin>keytool -v -list -keystore ./devownerkey.jks
+Enter keystore password:
+
+Keystore type: JKS
+Keystore provider: SUN
+
+Your keystore contains 1 entry
+
+Alias name: klahrlab0
+Creation date: Oct 30, 2018
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: CN=Klahr Lab, OU=Psychology, O=CMU, L=PITTSBURGH, ST=PA, C=01
+Issuer: CN=Klahr Lab, OU=Psychology, O=CMU, L=PITTSBURGH, ST=PA, C=01
+Serial number: 2b00f63c
+Valid from: Tue Oct 30 12:58:53 EDT 2018 until: Sat Oct 24 12:58:53 EDT 2043
+Certificate fingerprints:
+         MD5:  1A:48:DA:10:BC:53:E2:1C:2C:BA:41:8D:C4:79:12:9B
+         SHA1: 4E:72:47:C2:C6:80:77:FC:D6:C9:DC:56:B0:A3:B7:6D:A3:81:03:84
+         SHA256: 03:12:77:BE:0A:75:43:7C:BB:E0:1A:ED:5E:4C:D4:08:A9:9D:CF:D7:FD:77:DD:AF:75:F2:15:77:2C:10:7B:60
+         Signature algorithm name: SHA256withRSA
+         Version: 3
+
+Extensions:
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 4B 2B 88 EC A4 B1 53 9E   96 C4 5B 81 33 FB 68 33  K+....S...[.3.h3
+0010: F9 8A C4 B6                                        ....
+]
+]
+
+
+
+*******************************************
+*******************************************

@@ -82,7 +82,6 @@ public class TCONST {
     public static final String SYSTEM_STATUS        = "SYSTEM_STATUS";
     public static final String SLAVE_MODE           = "SLAVE_MODE";
     public static final String USER_MODE            = "USER_MODE";
-    public static final String FINISH_APP           = "FINISH_APP";
 
     public static final String LAUNCH_SETTINGS      = "LAUNCH_SETTINGS";
     public static final String SET_HOME_APP         = "SET_HOME_APP";
@@ -122,4 +121,7 @@ public class TCONST {
     public static final String PLUG_CONNECT     = "android.intent.action.ACTION_POWER_CONNECTED";
     public static final String PLUG_DISCONNECT  = "android.intent.action.ACTION_POWER_DISCONNECTED";
 
+    public static final String EFHOST_FINISHER_INTENT   = "org.edforge.androidhost.EFHOST_FINISHER_INTENT";
+    public static final String EFHOME_FINISHER_INTENT   = "org.edforge.efhomescreen.EFHOME_FINISHER_INTENT";
+    public static final String EFHOME_STARTER_INTENT    = "org.edforge.efhomescreen.EFHOME_STARTER_INTENT";
 }
