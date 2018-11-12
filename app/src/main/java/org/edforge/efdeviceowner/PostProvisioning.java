@@ -98,7 +98,8 @@ public class PostProvisioning {
 
         // Drop out quickly if we're neither profile or device owner.
         if (!isDeviceOwner) {
-            return null;}
+                 return null;
+        }
 
         launch = new Intent(mContext, OwnerActivity.class);
         launch.putExtra(EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE, extras);

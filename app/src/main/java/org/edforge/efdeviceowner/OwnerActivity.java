@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.os.BatteryManager;
 import android.os.Bundle;
@@ -39,31 +40,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import org.edforge.efdeviceowner.net.CCommandProcessor;
 import org.edforge.util.TCONST;
 
-import java.util.List;
-
-import static android.app.ActivityManager.LOCK_TASK_MODE_LOCKED;
-import static android.app.ActivityManager.LOCK_TASK_MODE_NONE;
-import static android.app.ActivityManager.LOCK_TASK_MODE_PINNED;
 import static org.edforge.efdeviceowner.PlugStatusReceiver.PLUG_CONNECT_STATE;
 import static org.edforge.efdeviceowner.PlugStatusReceiver.PLUG_PREFS;
-import static org.edforge.util.TCONST.BREAK_OUT;
+import static org.edforge.util.TCONST.ANDROID_BREAK_OUT;
 import static org.edforge.util.TCONST.ASUSDEF_LAUNCHER;
-import static org.edforge.util.TCONST.EFHOME_LAUNCHER;
 import static org.edforge.util.TCONST.EFHOME_LAUNCH_INTENT;
 import static org.edforge.util.TCONST.EFHOME_PACKAGE;
 import static org.edforge.util.TCONST.EFHOME_STARTER_INTENT;
 import static org.edforge.util.TCONST.EFHOST_PACKAGE;
 import static org.edforge.util.TCONST.EFOWNER_LAUNCHER;
 import static org.edforge.util.TCONST.EFOWNER_PACKAGE;
-import static org.edforge.util.TCONST.LAUNCH_HOME;
-import static org.edforge.util.TCONST.PLUG_CONNECT;
-import static org.edforge.util.TCONST.PLUG_DISCONNECT;
 import static org.edforge.util.TCONST.REBOOT_DEVICE;
 import static org.edforge.util.TCONST.SYSTEM_STATUS;
 import static org.edforge.util.TCONST.USER_MODE;
@@ -83,7 +73,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
     private LocalBroadcastManager   bManager;
     private homeReceiver            bReceiver;
 
-    private LayoutInflater          mInflater;
+    private LayoutInflater mInflater;
 
     private BreakOutView        breakOutView;
     private DeviceOwnerView     deviceOwnerView;
@@ -91,7 +81,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
     private View                mCurrView = null;
 
 
-    private String              mPackage;
+    private String mPackage;
     private ComponentName       mAdminComponentName;
     private ActivityManager     mActivityManager;
     private DevicePolicyManager mDevicePolicyManager;
@@ -101,25 +91,26 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
     private ComponentName       mDeviceAdmin;
     private SharedPreferences   mSharedPrefs;
     private PackageManager      mPackageManager;
-    private boolean             mHomeAvail = false;
+    private boolean             mInLockTask = false;
+    private boolean             mHomeAvail  = false;
 
-    private boolean             isInBreakOut = false;
+    private boolean isInBreakOut = false;
 
     private static final String Battery_PLUGGED_ANY = Integer.toString(
-                        BatteryManager.BATTERY_PLUGGED_AC |
-                        BatteryManager.BATTERY_PLUGGED_USB |
-                        BatteryManager.BATTERY_PLUGGED_WIRELESS);
+            BatteryManager.BATTERY_PLUGGED_AC |
+                    BatteryManager.BATTERY_PLUGGED_USB |
+                    BatteryManager.BATTERY_PLUGGED_WIRELESS);
 
     private static final String DONT_STAY_ON = "0";
 
-    public final static String  ASSET_FOLDER   = Environment.getExternalStorageDirectory() + TCONST.EDFORGE_FOLDER;
-    public final static String  UPDATE_FOLDER  = Environment.getExternalStorageDirectory() + TCONST.EDFORGE_UPDATE_FOLDER;
-    public final static String  LOG_PATH       = Environment.getExternalStorageDirectory() + TCONST.EDFORGE_LOG_FOLDER;
-    public final static String  DATA_PATH      = Environment.getExternalStorageDirectory() + TCONST.EDFORGE_DATA_FOLDER;
-    public final static String  XFER_PATH      = Environment.getExternalStorageDirectory() + TCONST.EDFORGE_DATA_TRANSFER;
+    public final static String ASSET_FOLDER = Environment.getExternalStorageDirectory() + TCONST.EDFORGE_FOLDER;
+    public final static String UPDATE_FOLDER = Environment.getExternalStorageDirectory() + TCONST.EDFORGE_UPDATE_FOLDER;
+    public final static String LOG_PATH = Environment.getExternalStorageDirectory() + TCONST.EDFORGE_LOG_FOLDER;
+    public final static String DATA_PATH = Environment.getExternalStorageDirectory() + TCONST.EDFORGE_DATA_FOLDER;
+    public final static String XFER_PATH = Environment.getExternalStorageDirectory() + TCONST.EDFORGE_DATA_TRANSFER;
 
-    public final static String[] efPaths = {ASSET_FOLDER,UPDATE_FOLDER,LOG_PATH,DATA_PATH,XFER_PATH};
-    public final static String[] taskLockPkgs = {EFOWNER_PACKAGE,EFHOME_PACKAGE,EFHOST_PACKAGE};
+    public final static String[] efPaths = {ASSET_FOLDER, UPDATE_FOLDER, LOG_PATH, DATA_PATH, XFER_PATH};
+    public final static String[] taskLockPkgs = {EFOWNER_PACKAGE, EFHOME_PACKAGE, EFHOST_PACKAGE};
 
     private static final String TAG = "OwnerActivity";
 
@@ -141,8 +132,6 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
         mPackage             = getApplicationContext().getPackageName();
         mPackageManager      = getPackageManager();
 
-        mHomeAvail = testPackageInstalled(EFHOME_PACKAGE);
-
         if (mDevicePolicyManager.isDeviceOwnerApp(mPackage)) {
 
             mProvisioningManager.performPostProvisioningOperations(null);
@@ -161,7 +150,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
         filter.addAction(TCONST.REBOOT_DEVICE);
         filter.addAction(TCONST.WIPE_DEVICE);
         filter.addAction(TCONST.GO_HOME);
-        filter.addAction(TCONST.BREAK_OUT);
+        filter.addAction(TCONST.ANDROID_BREAK_OUT);
         filter.addAction(TCONST.SETUP_MODE);
         filter.addAction(USER_MODE);
         filter.addAction(EFHOME_STARTER_INTENT);
@@ -174,34 +163,34 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 //        startActivityForResult(it, 0);
 
         setContentView(R.layout.activity_master_container);
-        masterContainer = (MasterContainer)findViewById(R.id.master_container);
+        masterContainer = (MasterContainer) findViewById(R.id.master_container);
 
-        mInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        breakOutView = (BreakOutView) mInflater.inflate(R.layout.breakout_view, null );
+        breakOutView = (BreakOutView) mInflater.inflate(R.layout.breakout_view, null);
         params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         breakOutView.setLayoutParams(params);
-        breakOutView.setMode(BREAK_OUT);
+        breakOutView.setMode(ANDROID_BREAK_OUT);
         breakOutView.setCallback(this);
 
-        deviceOwnerView = (DeviceOwnerView) mInflater.inflate(R.layout.device_owner_view, null );
+        deviceOwnerView = (DeviceOwnerView) mInflater.inflate(R.layout.device_owner_view, null);
         params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         deviceOwnerView.setLayoutParams(params);
         deviceOwnerView.setCallback(this);
 
-        slaveModeView = (SlaveModeView) mInflater.inflate(R.layout.slave_mode_view, null );
+        slaveModeView = (SlaveModeView) mInflater.inflate(R.layout.slave_mode_view, null);
         params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         slaveModeView.setLayoutParams(params);
 
         if (mDevicePolicyManager.isDeviceOwnerApp(mPackage)) {
 
             // This app is set up as the device owner. Show the main features.
-            broadcast(SYSTEM_STATUS,"EdForge Owns Device");
+            broadcast(SYSTEM_STATUS, "EdForge Owns Device");
             setDefaultCosuPolicies(true);
 
         } else {
 
-            broadcast(SYSTEM_STATUS,"Google Owns Device");
+            broadcast(SYSTEM_STATUS, "Google Owns Device");
         }
     }
 
@@ -241,18 +230,18 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
         super.onResume();
 
+        mHomeAvail = testPackageInstalled(EFHOME_PACKAGE);
+
         enterLockTask();
         setFullScreen();
 
-        switchView(deviceOwnerView);
-
-//        if(isPlugConnected() || isInBreakOut || !mHomeAvail) {
-//            switchView(deviceOwnerView);
-//            isInBreakOut = false;
-//        }
-//        else {
-//            broadcast(USER_MODE);
-//        }
+        if(isPlugConnected() || isInBreakOut || !mHomeAvail) {
+            switchView(deviceOwnerView);
+            isInBreakOut = false;
+        }
+        else {
+            broadcast(USER_MODE);
+        }
     }
 
     private void setFullScreen() {
@@ -284,7 +273,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
         // set this Activity as a lock task package
         //
-        if(active)
+        if (active)
             mDevicePolicyManager.setLockTaskPackages(mAdminComponentName, taskLockPkgs);
 
     }
@@ -322,7 +311,15 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
             // start lock task mode if it's not already active
             //
             mLauncherManager.setPreferredLauncher(EFOWNER_LAUNCHER);
-            startLockTask();
+
+            try {
+                if (!mInLockTask) {
+                    startLockTask();
+                    mInLockTask = true;
+                }
+            } catch (IllegalStateException e) {
+                // no lock task present, ignore
+            }
         }
     }
 
@@ -334,7 +331,10 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
             // stop lock task mode if it's active
             //
             try {
-                stopLockTask();
+                if(mInLockTask) {
+                    stopLockTask();
+                    mInLockTask = false;
+                }
             } catch (IllegalStateException e) {
                 // no lock task present, ignore
             }
@@ -342,13 +342,15 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        switch(requestCode) {
+        switch (requestCode) {
             case 100:
                 isInBreakOut = true;
+                break;
+
+            default:
                 break;
         }
     }
@@ -358,7 +360,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
         DevicePolicyManager manager =
                 (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
 
-        mDeviceAdmin = DeviceOwnerReceiver.getComponentName(this );
+        mDeviceAdmin = DeviceOwnerReceiver.getComponentName(this);
         manager.clearUserRestriction(mDeviceAdmin, UserManager.DISALLOW_FACTORY_RESET);
 //        manager.removeActiveAdmin(mDeviceAdmin)
 
@@ -370,7 +372,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
         DevicePolicyManager manager =
                 (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
 
-        mDeviceAdmin = DeviceOwnerReceiver.getComponentName(this );
+        mDeviceAdmin = DeviceOwnerReceiver.getComponentName(this);
 
         manager.reboot(mDeviceAdmin);
     }
@@ -394,7 +396,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
     public void switchView(View target) {
 
-        if(mCurrView != null)
+        if (mCurrView != null)
             masterContainer.removeView(mCurrView);
 
         masterContainer.addAndShow(target);
@@ -408,6 +410,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
         bManager.sendBroadcast(msg);
     }
+
     public void broadcast(String Action, String Msg) {
 
         Intent msg = new Intent(Action);
@@ -429,9 +432,11 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
     class homeReceiver extends BroadcastReceiver {
 
+        PackageInstaller.SessionInfo session;
+
         public void onReceive (Context context, Intent intent) {
 
-            Log.d("homeReceiver", "Broadcast recieved: ");
+            Log.d("homeReceiver", "Broadcast received: ");
 
             switch(intent.getAction()) {
 
@@ -464,9 +469,11 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
                 case USER_MODE:
                 case EFHOME_STARTER_INTENT:
+                    mHomeAvail = testPackageInstalled(EFHOME_PACKAGE);
+
                     if(mHomeAvail)
-//                        startActivityForResult(getIntent(EFHOME_LAUNCH_INTENT), 100);
-                        startActivity(getIntent(EFHOME_LAUNCH_INTENT));
+                        startActivityForResult(getIntent(EFHOME_LAUNCH_INTENT), 100);
+//                        startActivity(getIntent(EFHOME_LAUNCH_INTENT));
                     break;
 
                 case TCONST.LAUNCH_SETTINGS:
@@ -475,9 +482,8 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
                 case TCONST.REQ_ANDROID_BREAKOUT:
 
-                    exitLockTask();
-                    mLauncherManager.setPreferredLauncher(ASUSDEF_LAUNCHER);
-                    rebootDevice();
+                    breakOutView.setMode(ANDROID_BREAK_OUT);
+                    switchView(breakOutView);
                     break;
 
                 case TCONST.REQ_REBOOT_DEVICE:
@@ -488,6 +494,12 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
                 case TCONST.REQ_WIPE_DEVICE:
                     breakOutView.setMode(WIPE_DEVICE);
                     switchView(breakOutView);
+                    break;
+
+                case TCONST.ANDROID_BREAK_OUT:
+                    exitLockTask();
+                    mLauncherManager.setPreferredLauncher(ASUSDEF_LAUNCHER);
+                    rebootDevice();
                     break;
 
                 case TCONST.REBOOT_DEVICE:
@@ -502,6 +514,8 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
             }
         }
     }
+
+
 }
 
 

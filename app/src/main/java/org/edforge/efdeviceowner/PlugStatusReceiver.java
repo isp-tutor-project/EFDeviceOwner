@@ -27,6 +27,9 @@ public class PlugStatusReceiver extends BroadcastReceiver {
     private SharedPreferences mSharedPrefs;
     private LocalBroadcastManager bManager;
 
+//    public PlugStatusReceiver() {
+//    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
 

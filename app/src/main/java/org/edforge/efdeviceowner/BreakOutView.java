@@ -13,7 +13,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.edforge.util.TCONST.BREAK_OUT;
+import static org.edforge.util.TCONST.ANDROID_BREAK_OUT;
 import static org.edforge.util.TCONST.GO_HOME;
 import static org.edforge.util.TCONST.REBOOT_DEVICE;
 import static org.edforge.util.TCONST.WIPE_DEVICE;
@@ -102,7 +102,7 @@ public class BreakOutView extends FrameLayout {
                 mRequest.setBackgroundColor(0xFFFF8800);
                 break;
 
-            case BREAK_OUT:
+            case ANDROID_BREAK_OUT:
                 mRequest.setText("System Breakout");
                 mPrompt = "To Exit to System - Press 5 ";
                 mRequest.setBackgroundColor(0xFF0000FF);
@@ -194,10 +194,10 @@ public class BreakOutView extends FrameLayout {
                                     broadcast(REBOOT_DEVICE);
                                     break;
 
-                                case BREAK_OUT:
+                                case ANDROID_BREAK_OUT:
                                     Log.i(TAG, "Breaking Out To System");
 
-                                    broadcast(BREAK_OUT);
+                                    broadcast(ANDROID_BREAK_OUT);
                                     break;
                             }
                         }

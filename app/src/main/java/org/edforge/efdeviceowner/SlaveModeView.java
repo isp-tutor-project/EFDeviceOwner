@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.edforge.efdeviceowner.net.CClient;
 import org.edforge.efdeviceowner.net.CServer;
@@ -22,6 +23,8 @@ import org.edforge.util.TCONST;
 import static org.edforge.util.TCONST.COMMAND_MODE;
 import static org.edforge.util.TCONST.EDFORGE_NETID;
 import static org.edforge.util.TCONST.GO_HOME;
+import static org.edforge.util.TCONST.INSTALLATION_COMPLETE;
+import static org.edforge.util.TCONST.INSTALLATION_PENDING;
 import static org.edforge.util.TCONST.NET_STATUS;
 import static org.edforge.util.TCONST.NET_SWITCH_FAILED;
 import static org.edforge.util.TCONST.NET_SWITCH_SUCESS;
@@ -41,7 +44,9 @@ public class SlaveModeView extends FrameLayout implements IThreadComplete {
     private CClient         mClient;
     private CServer         mServer;
     private String          mMode;
+    private int             mPending = 0;
 
+    private TextView        Spending;
     private TextView        Sstatus;
     private TextView        SslaveStatus;
     private Button          bHome;
@@ -86,6 +91,8 @@ public class SlaveModeView extends FrameLayout implements IThreadComplete {
         filter.addAction(NET_SWITCH_SUCESS);
         filter.addAction(NET_SWITCH_FAILED);
         filter.addAction(NET_STATUS);
+        filter.addAction(INSTALLATION_PENDING);
+        filter.addAction(INSTALLATION_COMPLETE);
 
         bReceiver = new slaveViewReceiver();
         bManager.registerReceiver(bReceiver, filter);
@@ -97,6 +104,7 @@ public class SlaveModeView extends FrameLayout implements IThreadComplete {
 
         super.onFinishInflate();
 
+        Spending     = (TextView) findViewById(R.id.Spending);
         Sstatus      = (TextView) findViewById(R.id.Sstatus);
         SslaveStatus = (TextView) findViewById(R.id.SslaveStatus);
         SslaveStatus.setMovementMethod(new ScrollingMovementMethod());
@@ -128,6 +136,39 @@ public class SlaveModeView extends FrameLayout implements IThreadComplete {
     @Override
     public void notifyOfThreadComplete(CClient.ClientThread thread, String status) {
     }
+
+
+    public void broadcast(String Action) {
+
+        Intent msg = new Intent(Action);
+        bManager.sendBroadcast(msg);
+    }
+
+
+    OnClickListener clickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            int vid = v.getId();
+
+            if (vid == R.id.bHome) {
+
+                if(mPending > 0) {
+                    Toast.makeText(mContext, "Installations Pending: PLEASE WAIT.", Toast.LENGTH_SHORT).show();
+                    Spending.setTextColor( 0xffDD0000);
+                }
+                else {
+                    if (mServer != null)
+                        mServer.onStop();
+//
+//                if(mClient != null)
+//                    mClient.onStop();
+
+                    broadcast(GO_HOME);
+                }
+            }
+        }
+    };
 
 
     class slaveViewReceiver extends BroadcastReceiver {
@@ -170,34 +211,16 @@ public class SlaveModeView extends FrameLayout implements IThreadComplete {
                     SslaveStatus.append("\n"+status);
                     break;
 
+                case INSTALLATION_PENDING:
+                    mPending++;
+                    Spending.setText("Pending Installations: " + mPending);
+                    break;
+
+                case INSTALLATION_COMPLETE:
+                    mPending--;
+                    Spending.setText("Pending Installations: " + mPending);
+                    break;
             }
         }
     }
-
-
-    public void broadcast(String Action) {
-
-        Intent msg = new Intent(Action);
-        bManager.sendBroadcast(msg);
-    }
-
-
-    OnClickListener clickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-            int vid = v.getId();
-
-            if (vid == R.id.bHome) {
-
-                if(mServer != null)
-                    mServer.onStop();
-//
-//                if(mClient != null)
-//                    mClient.onStop();
-
-                broadcast(GO_HOME);
-            }
-        }
-    };
 }

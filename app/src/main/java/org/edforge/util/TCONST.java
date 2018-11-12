@@ -71,6 +71,9 @@ public class TCONST {
     public static final int COMMAND_RECVACK     = 9;
 
 
+    public static final String EDFORGE_INSTALLED_PACKAGE = "EDFORGE_INSTALLED_PACKAGE";
+    public static final String ACTION_INSTALL_COMPLETE   = "ACTION_INSTALL_COMPLETE";
+
 
     public static final String PULL         = "PULL";
     public static final String PUSH         = "PUSH";
@@ -91,7 +94,7 @@ public class TCONST {
     public static final String REQ_ANDROID_BREAKOUT = "REQ_ANDROID_BREAKOUT";
 
     public static final String REASON               = "REASON";
-    public static final String BREAK_OUT            = "BREAK_OUT";
+    public static final String ANDROID_BREAK_OUT    = "ANDROID_BREAK_OUT";
     public static final String REBOOT_DEVICE        = "REBOOT_DEVICE";
     public static final String WIPE_DEVICE          = "WIPE_DEVICE";
 
@@ -124,4 +127,13 @@ public class TCONST {
     public static final String EFHOST_FINISHER_INTENT   = "org.edforge.androidhost.EFHOST_FINISHER_INTENT";
     public static final String EFHOME_FINISHER_INTENT   = "org.edforge.efhomescreen.EFHOME_FINISHER_INTENT";
     public static final String EFHOME_STARTER_INTENT    = "org.edforge.efhomescreen.EFHOME_STARTER_INTENT";
+
+    public static final String INSTALLATION_PENDING    = "INSTALLATION_PENDING";
+    public static final String INSTALLATION_COMPLETE   = "INSTALLATION_COMPLETE";
+
+
+
 }
+
+
+
