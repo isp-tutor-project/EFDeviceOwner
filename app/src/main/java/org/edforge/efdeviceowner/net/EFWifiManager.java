@@ -2,6 +2,7 @@ package org.edforge.efdeviceowner.net;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -80,7 +81,9 @@ public class EFWifiManager {
 
         WifiInfo info = mWifiManager.getConnectionInfo();
 
-        if (!info.getSSID().equals(SSID(target))) {
+        if (!info.getSSID().equals(SSID(target)) ||
+            !info.getSupplicantState().equals(SupplicantState.COMPLETED)) {
+
             Log.i(TAG, info.getSSID());
 
             workerThread = new Thread(new netSwitch(target));
@@ -123,7 +126,7 @@ public class EFWifiManager {
 
             WifiInfo info = mWifiManager.getConnectionInfo();
 
-            return info.getSSID().equals(SSID(target));
+            return info.getSSID().equals(SSID(target)) && info.getSupplicantState().equals(SupplicantState.COMPLETED);
         }
 
 

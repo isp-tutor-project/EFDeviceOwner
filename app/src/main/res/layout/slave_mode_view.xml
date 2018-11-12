@@ -56,6 +56,18 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/Spending"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="25dp"
+            android:text="Pending Installations: 0"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
     </FrameLayout>
 
 </org.edforge.efdeviceowner.SlaveModeView>

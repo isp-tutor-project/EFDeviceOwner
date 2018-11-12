@@ -53,9 +53,10 @@ public class DeviceOwnerReceiver extends DeviceAdminReceiver {
 
         // Enable the profile
         DevicePolicyManager manager = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        ComponentName componentName = getComponentName(context);
-        manager.setProfileName(componentName, context.getString(R.string.profile_name));
-        manager.setProfileEnabled(componentName);
+        ComponentName mDeviceAdmin = getComponentName(context);
+
+        manager.setProfileName(mDeviceAdmin, context.getString(R.string.profile_name));
+        manager.setProfileEnabled(mDeviceAdmin);
 
         Intent launch = new Intent(context, OwnerActivity.class);
         launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

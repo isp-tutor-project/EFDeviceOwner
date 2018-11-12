@@ -3,9 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--The order of these matters - the first matched gets drawn-->
-    <item
-        android:state_pressed="true"
-        android:drawable="@drawable/button_blu_dn"/>
 
-    <item android:drawable="@drawable/button_blu_up" /> <!-- default -->
+    <!-- default -->
+    <item android:state_pressed="true" android:drawable="@drawable/button_blu_dn" />
+    <item android:drawable="@drawable/button_blu_up" />
 </selector>

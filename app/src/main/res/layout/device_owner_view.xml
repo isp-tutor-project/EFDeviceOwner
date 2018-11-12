@@ -46,31 +46,40 @@
                 android:id="@+id/SsetupMode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Setup Device"
+                android:background="@color/colorPrimary"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
                 android:padding="30dp"
-                android:textColor="@android:color/black"
+                android:text="Setup Device"
+                android:textColor="@android:color/background_light"
                 android:textSize="30sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/SslaveMode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Slave Mode"
+                android:background="@color/colorPrimary"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
                 android:padding="30dp"
-                android:textColor="@android:color/black"
+                android:text="Slave Mode"
+                android:textColor="@android:color/background_light"
                 android:textSize="30sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/SuserMode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="User Mode"
+                android:background="@color/colorPrimary"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
                 android:padding="30dp"
-                android:textColor="@android:color/black"
+                android:text="User Mode"
+                android:textColor="@android:color/background_light"
                 android:textSize="30sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout

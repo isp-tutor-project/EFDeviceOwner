@@ -1,7 +1,9 @@
 package org.edforge.efdeviceowner.net;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Environment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.edforge.efdeviceowner.OwnerActivity;
@@ -19,42 +21,48 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import static org.edforge.util.TCONST.INSTALLATION_PENDING;
+
 /**
  * Created by kevin on 10/21/2018.
  */
 
 public class CCommandProcessor {
 
-    private Context             mContext;
-    private PackageUpdater      mPackageUpdater;
-    private PostProvisioning    mPostProvisioning;
+    private Context mContext;
+    private PackageUpdater mPackageUpdater;
+    private PostProvisioning mPostProvisioning;
 
     private CEF_Command mCommand;
+    private LocalBroadcastManager bManager;
 
-    private Zip         mZip;
-    private String      mOutPath;
-    private String      mTmpPath;
-    private File        mZipFile;
-    private File        mTmpFile;
-    private long        mZipSize;
+    private Zip mZip;
+    private String mOutPath;
+    private String mTmpPath;
+    private File mZipFile;
+    private File mTmpFile;
+    private long mZipSize;
 
-    InputStream inputStream  = null;
+    InputStream inputStream = null;
     OutputStream outputStream = null;
 
-    byte[] buffer           = new byte[1024];
-    int    read;
+    byte[] buffer = new byte[1024];
+    int read;
 
-    long   bytesAvail = 0;
-    long   bytesRecvd = 0;
+    long bytesAvail = 0;
+    long bytesRecvd = 0;
 
 
-    static final String TAG="CCommandProcessor";
+    static final String TAG = "CCommandProcessor";
 
     public CCommandProcessor(Context context) {
 
-        mContext          = context;
-        mPackageUpdater   = new PackageUpdater(mContext);
+        mContext = context;
+        mPackageUpdater = new PackageUpdater(mContext);
         mPostProvisioning = new PostProvisioning(mContext);
+
+        // Capture the local broadcast manager
+        bManager = LocalBroadcastManager.getInstance(mContext);
     }
 
 
@@ -82,11 +90,11 @@ public class CCommandProcessor {
 
     private String cleanTempPath() {
 
-        String tempPath = OwnerActivity.XFER_PATH  + TCONST.EDFORGEZIPTEMP;
+        String tempPath = OwnerActivity.XFER_PATH + TCONST.EDFORGEZIPTEMP;
 
         File tempFile = new File(tempPath);
 
-        if(tempFile.exists())
+        if (tempFile.exists())
             tempFile.delete();
 
         return tempPath;
@@ -96,11 +104,10 @@ public class CCommandProcessor {
 
         String result = base;
 
-        if(leaf.matches("/^[\\w\\$]/")) {
+        if (leaf.matches("/^[\\w\\$]/")) {
 
             result += File.separator + leaf;
-        }
-        else  {
+        } else {
             result += leaf;
         }
 
@@ -113,15 +120,15 @@ public class CCommandProcessor {
         String sdcard = "";
         String[] pathArr = path.split("/");
 
-        for(String folder:pathArr) {
+        for (String folder : pathArr) {
 
-            if((folder != null) && (!folder.isEmpty())) {
+            if ((folder != null) && (!folder.isEmpty())) {
 
                 sdcard += File.separator + folder;
 
                 File folderInstance = new File(sdcard);
 
-                if(!folderInstance.exists()) {
+                if (!folderInstance.exists()) {
                     Log.i(TAG, "Making: " + sdcard);
                     folderInstance.mkdir();
                 }
@@ -134,7 +141,7 @@ public class CCommandProcessor {
 
     public void validatePaths(String[] paths) {
 
-        for(String folder:paths) {
+        for (String folder : paths) {
 
             validatePath(folder);
         }
@@ -146,16 +153,15 @@ public class CCommandProcessor {
         int result = TCONST.COMMAND_WAIT;
 
         try {
-            if(mCommand.extract) {
+            if (mCommand.extract) {
                 mTmpPath = cleanTempPath();
-            }
-            else {
+            } else {
                 mTmpPath = joinPath(Environment.getExternalStorageDirectory().getAbsolutePath(), mCommand.to);
             }
 
-            outputStream  = new FileOutputStream(mTmpPath);
-            bytesAvail    = mCommand.size;
-            bytesRecvd    = 0;
+            outputStream = new FileOutputStream(mTmpPath);
+            bytesAvail = mCommand.size;
+            bytesRecvd = 0;
 
             result = TCONST.COMMAND_RECVDATA;
 
@@ -167,17 +173,16 @@ public class CCommandProcessor {
     }
 
 
-
     public int recvData(DataInputStream socketInStream, DataOutputStream socketOutStream) {
 
         int result = TCONST.COMMAND_WAIT;
 
         try {
 
-            if((bytesAvail > 0 && (read = socketInStream.read(buffer)) != -1)) {
+            if ((bytesAvail > 0 && (read = socketInStream.read(buffer)) != -1)) {
 
 
-                outputStream.write(buffer, 0, ((read > bytesAvail)? (int)bytesAvail:read));
+                outputStream.write(buffer, 0, ((read > bytesAvail) ? (int) bytesAvail : read));
                 bytesAvail -= read;
                 bytesRecvd += read;
 
@@ -186,12 +191,12 @@ public class CCommandProcessor {
                 result = TCONST.COMMAND_RECVACK;
             }
 
-            if(bytesAvail <= 0)  {
+            if (bytesAvail <= 0) {
 
                 outputStream.flush();
                 outputStream.close();
 
-                if(mCommand.extract) {
+                if (mCommand.extract) {
 
                     mOutPath = joinPath(Environment.getExternalStorageDirectory().getAbsolutePath(), mCommand.to);
 
@@ -201,13 +206,12 @@ public class CCommandProcessor {
                     mZip.extractAll(mTmpPath, mOutPath);
                 }
 
-                if(mCommand.app_package != null && mCommand.command.equals(TCONST.INSTALL)) {
+                if (mCommand.app_package != null && mCommand.command.equals(TCONST.INSTALL)) {
 
                     Log.i(TAG, "Installing Package");
-                    mPackageUpdater.updatePackage(mTmpPath);
-                    Log.i(TAG, "Setting Permissions");
+                    broadcast(INSTALLATION_PENDING);
 
-                    mPostProvisioning.autoGrantRequestedPermissionsToPackage(mCommand.app_package);
+                    mPackageUpdater.updatePackage(mCommand, mTmpPath);
                     Log.i(TAG, "Package Installed");
                 }
                 result = TCONST.COMMAND_WAIT;
@@ -221,12 +225,11 @@ public class CCommandProcessor {
     }
 
 
-
     public long prepareSendData() {
 
         long result = 0L;
 
-        if(mCommand.compress) {
+        if (mCommand.compress) {
 
             try {
                 mTmpPath = cleanTempPath();
@@ -244,9 +247,8 @@ public class CCommandProcessor {
                 e.printStackTrace();
             }
 
-        }
-        else {
-            Log.e(TAG,"Unsupported Command: " + mCommand.command + " without compress!");
+        } else {
+            Log.e(TAG, "Unsupported Command: " + mCommand.command + " without compress!");
         }
 
         return result;
@@ -257,10 +259,10 @@ public class CCommandProcessor {
 
         int result = TCONST.COMMAND_WAIT;
 
-        if(mCommand.compress) {
+        if (mCommand.compress) {
 
             try {
-                if(mZipSize > 0) {
+                if (mZipSize > 0) {
 
                     read = inputStream.read(buffer);
 
@@ -271,8 +273,7 @@ public class CCommandProcessor {
 
                     Log.i(TAG, "Sent Bytes: " + read);
                     result = TCONST.COMMAND_SENDACK;
-                }
-                else {
+                } else {
                     inputStream.close();
                     socketStream.flush();
                 }
@@ -280,14 +281,12 @@ public class CCommandProcessor {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else {
-            Log.e(TAG,"Unsupported" );
+        } else {
+            Log.e(TAG, "Unsupported");
         }
 
         return result;
     }
-
 
 
     protected void moveFile(String inputPath, String outputPath) {
@@ -301,17 +300,17 @@ public class CCommandProcessor {
     protected void copyFile(String inputPath, String outputPath) {
 
         OutputStream out = null;
-        InputStream in  = null;
+        InputStream in = null;
 
-        byte[] buffer    = new byte[1024];
-        int    read;
+        byte[] buffer = new byte[1024];
+        int read;
 
         try {
 
 //            System.out.println("File copy:" + inputPath + " -to- " + outputPath);
 
             try {
-                in  = new FileInputStream(inputPath);
+                in = new FileInputStream(inputPath);
                 out = new FileOutputStream(outputPath);
 
                 while ((read = in.read(buffer)) != -1) {
@@ -322,7 +321,7 @@ public class CCommandProcessor {
                 out.flush();
                 out.close();
 
-            } catch(java.io.FileNotFoundException e) {
+            } catch (java.io.FileNotFoundException e) {
                 System.out.println("INFO: Skipping missing file: " + inputPath + " - reason: " + e);
 
             } catch (IOException e) {
@@ -330,14 +329,18 @@ public class CCommandProcessor {
 
             } finally {
 
-                in  = null;
+                in = null;
                 out = null;
             }
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             System.out.println("INFO: File Copy Failed: " + inputPath + " - reason: " + e);
         }
     }
 
 
+    public void broadcast(String Action) {
+
+        Intent msg = new Intent(Action);
+        bManager.sendBroadcast(msg);
+    }
 }
