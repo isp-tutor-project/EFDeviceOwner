@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import org.edforge.efdeviceowner.net.CClient;
 import org.edforge.efdeviceowner.net.CServer;
+import org.edforge.efdeviceowner.net.EFNetManager;
 import org.edforge.efdeviceowner.net.EFWifiManager;
 import org.edforge.util.IThreadComplete;
 import org.edforge.util.TCONST;
@@ -40,7 +41,7 @@ public class SlaveModeView extends FrameLayout implements IThreadComplete {
     private Context mContext;
     private IEdForgeLauncher  mCallback;
 
-    private EFWifiManager   mWIFImanager;
+    private EFNetManager    mNetManager;
     private CClient         mClient;
     private CServer         mServer;
     private String          mMode;
@@ -85,7 +86,7 @@ public class SlaveModeView extends FrameLayout implements IThreadComplete {
 
         // Capture the local broadcast manager
         bManager     = LocalBroadcastManager.getInstance(mContext);
-        mWIFImanager = new EFWifiManager(mContext);
+        mNetManager  = EFNetManager.getInstance();
 
         IntentFilter filter = new IntentFilter(SYSTEM_STATUS);
         filter.addAction(NET_SWITCH_SUCESS);
@@ -118,16 +119,18 @@ public class SlaveModeView extends FrameLayout implements IThreadComplete {
 
         mMode = SETUP_MODE;
         SslaveStatus.setText("Setup Status:");
-        mWIFImanager.reqSwitchNetwork(EDFORGE_NETID);
+        mNetManager.scanNetInterface();
 
+        mNetManager.reqSwitchNetwork(EDFORGE_NETID);
     }
 
     public void startServer() {
 
         mMode = COMMAND_MODE;
         SslaveStatus.setText("Setup Status:");
-        mWIFImanager.reqSwitchNetwork(EDFORGE_NETID);
+        mNetManager.scanNetInterface();
 
+        mNetManager.reqSwitchNetwork(EDFORGE_NETID);
     }
 
 

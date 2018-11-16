@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInstaller;
 
 import org.edforge.efdeviceowner.net.CEF_Command;
@@ -15,16 +16,24 @@ import java.io.OutputStream;
 
 import static org.edforge.util.TCONST.ACTION_INSTALL_COMPLETE;
 import static org.edforge.util.TCONST.EDFORGE_INSTALLED_PACKAGE;
+import static org.edforge.util.TCONST.EFOWNER_PACKAGE;
+import static org.edforge.util.TCONST.KEY_POST_PROV_DONE;
+import static org.edforge.util.TCONST.POST_PROV_PREFS;
 
 /**
  * Created by kevin on 10/20/2018.
  */
+
+
+// E/PackageInstaller: Commit of session 855829700 failed: Failed to parse /data/app/vmdl855829700.tmp/EF_Install_Session: AndroidManifest.xml
 
 public class PackageUpdater {
 
     private Context     mContext;
     private CEF_Command mCommand;
     private int         mReqCode = 1;
+
+    private SharedPreferences mSharedPrefs;
 
 
     public PackageUpdater(Context context) {
@@ -34,13 +43,18 @@ public class PackageUpdater {
 
     public boolean updatePackage(CEF_Command command, String apkPath) {
 
-        mCommand = command;
-        mReqCode = (int)System.currentTimeMillis() % 100000;
+        mCommand        = command;
+        mReqCode        = (int)System.currentTimeMillis() % 100000;
+        mSharedPrefs    = mContext.getSharedPreferences(POST_PROV_PREFS, Context.MODE_PRIVATE);
 
         try {
             PackageInstaller               pi = mContext.getPackageManager().getPackageInstaller();
             PackageInstaller.SessionParams sp = new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);
             sp.setAppPackageName(mCommand.app_package);
+
+//            if(mCommand.app_package.equals(EFOWNER_PACKAGE)) {
+//                mSharedPrefs.edit().putBoolean(KEY_POST_PROV_DONE, false).commit();
+//            }
 
             int sessId = pi.createSession(sp);
 

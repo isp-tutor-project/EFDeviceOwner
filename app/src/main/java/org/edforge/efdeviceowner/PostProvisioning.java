@@ -28,6 +28,7 @@ import android.content.pm.PermissionInfo;
 import android.os.Build;
 import android.os.PersistableBundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +36,10 @@ import java.util.List;
 import static android.app.admin.DevicePolicyManager.EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE;
 import static android.app.admin.DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED;
 import static org.edforge.efdeviceowner.DeviceOwnerReceiver.getComponentName;
-import static org.edforge.util.TCONST.ASUSDEF_LAUNCHER;
 import static org.edforge.util.TCONST.EFOWNER_LAUNCHER;
+import static org.edforge.util.TCONST.EFOWNER_PACKAGE;
+import static org.edforge.util.TCONST.KEY_POST_PROV_DONE;
+import static org.edforge.util.TCONST.POST_PROV_PREFS;
 
 /**
  * Task executed after provisioning is done indicated by either the
@@ -53,15 +56,12 @@ import static org.edforge.util.TCONST.EFOWNER_LAUNCHER;
  */
 public class PostProvisioning {
 
-    private static final String TAG                 = "PostProvisioningTask";
-    private static final String POST_PROV_PREFS     = "post_prov_prefs";
-    private static final String KEY_POST_PROV_DONE  = "key_post_prov_done";
-
     private final Context mContext;
     private final DevicePolicyManager mDevicePolicyManager;
     private final SharedPreferences mSharedPrefs;
     private final LauncherManager  mLauncherManager;
 
+    private static final String TAG = "EFProvisioning";
 
 
     public PostProvisioning(Context context) {
@@ -73,15 +73,18 @@ public class PostProvisioning {
 
     public boolean performPostProvisioningOperations(Intent intent) {
 
-        if (isPostProvisioningDone()) {
-            return false;
+        if(mDevicePolicyManager.isDeviceOwnerApp(EFOWNER_PACKAGE)) {
+
+            if (isPostProvisioningDone()) {
+                return false;
+            }
+            markPostProvisioningDone();
+
+            Log.d(TAG, "Attempting Auto-Grant Self Permission: ");
+            autoGrantRequestedPermissionsToSelf();
+
+            mLauncherManager.setPreferredLauncher(EFOWNER_LAUNCHER);
         }
-        markPostProvisioningDone();
-
-        autoGrantRequestedPermissionsToSelf();
-
-        mLauncherManager.setPreferredLauncher(EFOWNER_LAUNCHER);
-        mLauncherManager.clearPreferredLauncherByID(ASUSDEF_LAUNCHER);
         return true;
     }
 
@@ -110,6 +113,9 @@ public class PostProvisioning {
 
     private boolean isPostProvisioningDone() {
         return mSharedPrefs.getBoolean(KEY_POST_PROV_DONE, false);
+    }
+    public void markPostProvisioningNotDone() {
+        mSharedPrefs.edit().putBoolean(KEY_POST_PROV_DONE, false).commit();
     }
     private void markPostProvisioningDone() {
         mSharedPrefs.edit().putBoolean(KEY_POST_PROV_DONE, true).commit();

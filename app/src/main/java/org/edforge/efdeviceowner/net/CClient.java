@@ -40,8 +40,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static java.lang.Integer.parseInt;
-import static org.edforge.efdeviceowner.net.CServer.getIpAsString;
-import static org.edforge.efdeviceowner.net.CServer.getMacAsString;
 import static org.edforge.util.TCONST.NET_STATUS;
 
 /**
@@ -52,7 +50,9 @@ public class CClient {
 
     private Context                 mContext;
     private Socket                  clientSocket;
+
     private LocalBroadcastManager   bManager;
+    private EFNetManager            mNetManager;
 
     Thread clientThread;
 
@@ -78,7 +78,8 @@ public class CClient {
 
     public CClient(Context context, IThreadComplete owner) {
 
-        mContext = context;
+        mContext    = context;
+        mNetManager = EFNetManager.getInstance();
 
         try {
 
@@ -231,8 +232,8 @@ public class CClient {
                 Log.i(TAG, "Server State: " + clientState);
 
                 try {
-                    String data = getIpAsString();
-                    data += "|" + getMacAsString();
+                    String data = mNetManager.getIpAsString();
+                    data += "|" + mNetManager.getMacAsString();
 
                     Log.i(TAG, "Client Msg: " + data);
 

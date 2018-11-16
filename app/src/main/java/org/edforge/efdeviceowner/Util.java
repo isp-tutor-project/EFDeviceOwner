@@ -47,6 +47,8 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
+import static org.edforge.util.TCONST.EFOWNER_STARTER_INTENT;
+
 /**
  * Common utility functions.
  */
@@ -98,10 +100,20 @@ public class Util {
     }
 
     /** @return Intent for the default home activity */
-    public static Intent getHomeIntent() {
+    public static Intent getHomeLaunchIntent() {
         final Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addCategory(Intent.CATEGORY_HOME);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        return intent;
+    }
+
+    /** @return Intent for the default home activity */
+    public static Intent getOwnerLaunchIntent() {
+        final Intent intent = new Intent(EFOWNER_STARTER_INTENT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
         return intent;
     }
 
@@ -110,6 +122,7 @@ public class Util {
         final IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
         filter.addCategory(Intent.CATEGORY_HOME);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
+
         return filter;
     }
 

@@ -79,6 +79,10 @@ public class EFWifiManager {
 
     public void reqSwitchNetwork(String target) {
 
+//        if(EFNetManager.getConnection()) {
+//
+//        }
+
         WifiInfo info = mWifiManager.getConnectionInfo();
 
         if (!info.getSSID().equals(SSID(target)) ||
@@ -170,7 +174,4 @@ public class EFWifiManager {
 
         bManager.sendBroadcast(msg);
     }
-
-
-
 }

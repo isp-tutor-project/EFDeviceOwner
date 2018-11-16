@@ -39,7 +39,7 @@ public class TCONST {
     public static final String EXTERN          = "EXTERN";
     public static final String DEFINED         = "DEFINED";
 
-    // WIFI constants
+    // WIFI_PFX constants
     public static final String WEP         = "WEP";
     public static final String WPA         = "WPA";
     public static final String OPEN        = "OPEN";
@@ -111,6 +111,7 @@ public class TCONST {
     public static final String EFOWNER_LAUNCH_INTENT  = "org.edforge.efdeviceowner.EF_DEVICE_OWNER";
     public static final String EFHOME_LAUNCH_INTENT   = "org.edforge.efhomescreen.EF_HOME_SCREEN";
     public static final String EFHOST_LAUNCH_INTENT   = "org.edforge.androidhost.EF_ANDROID_HOST";
+    public static final String ASUS_LAUNCH_INTENT     = "com.asus.launcher/com.android.launcher3.Launcher";
     public static final String LAUNCH_HOME            = Intent.ACTION_MAIN;
 
     public static final String EFOWNER_PACKAGE = "org.edforge.efdeviceowner";
@@ -124,6 +125,7 @@ public class TCONST {
     public static final String PLUG_CONNECT     = "android.intent.action.ACTION_POWER_CONNECTED";
     public static final String PLUG_DISCONNECT  = "android.intent.action.ACTION_POWER_DISCONNECTED";
 
+    public static final String EFOWNER_STARTER_INTENT   = "org.edforge.efdeviceowner.EF_DEVICE_OWNER";
     public static final String EFHOST_FINISHER_INTENT   = "org.edforge.androidhost.EFHOST_FINISHER_INTENT";
     public static final String EFHOME_FINISHER_INTENT   = "org.edforge.efhomescreen.EFHOME_FINISHER_INTENT";
     public static final String EFHOME_STARTER_INTENT    = "org.edforge.efhomescreen.EFHOME_STARTER_INTENT";
@@ -131,6 +133,8 @@ public class TCONST {
     public static final String INSTALLATION_PENDING    = "INSTALLATION_PENDING";
     public static final String INSTALLATION_COMPLETE   = "INSTALLATION_COMPLETE";
 
+    public static final String POST_PROV_PREFS     = "post_prov_prefs";
+    public static final String KEY_POST_PROV_DONE  = "key_post_prov_done";
 
 
 }

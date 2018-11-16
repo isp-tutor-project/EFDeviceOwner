@@ -17,17 +17,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
 
 import static java.lang.Integer.parseInt;
 import static org.edforge.util.TCONST.NET_STATUS;
@@ -41,7 +36,9 @@ public class CServer {
 
     private Context                 mContext;
     private ServerSocket            serverSocket;
+
     private LocalBroadcastManager   bManager;
+    private EFNetManager            mNetManager;
 
     Thread serverThread;
 
@@ -54,7 +51,7 @@ public class CServer {
 
     public static InetAddress SERVERIP ;
     public static final int   CONNECTIONS = 5;
-    public static final int   SERVERPORT = 12007;
+    public static final int   SERVERPORT  = 12007;
 
     public int serverState = TCONST.START_STATE;
 
@@ -67,11 +64,12 @@ public class CServer {
 
     public CServer(Context context) {
 
-        mContext = context;
+        mContext    = context;
+        mNetManager = EFNetManager.getInstance();
 
         try {
 
-            SERVERIP = Inet4Address.getByAddress(this.getIpAddress());
+            SERVERIP = Inet4Address.getByAddress(mNetManager.getIpAddressAsByteArr());
 
         } catch (UnknownHostException e) {
 
@@ -451,85 +449,4 @@ public class CServer {
         }
     }
 
-    public static String getMacAsString() {
-
-        String mac = "";
-
-        try {
-            List<NetworkInterface> enumNetworkInterfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
-
-            for (NetworkInterface nif : enumNetworkInterfaces) {
-
-                if (!nif.getName().equalsIgnoreCase("wlan0")) continue;
-
-                byte[] macBytes = nif.getHardwareAddress();
-
-                if (macBytes != null) {
-
-                StringBuilder res1 = new StringBuilder();
-                for (byte b : macBytes) {
-                    String hex = Integer.toHexString(b & 0xFF);
-                    if (hex.length() == 1)
-                        hex = "0".concat(hex);
-                    res1.append(hex.concat(":"));
-                }
-
-                if (res1.length() > 0) {
-                    res1.deleteCharAt(res1.length() - 1);
-                }
-                    mac = res1.toString();
-                }
-            }
-        } catch (Exception ex) {
-        }
-
-        return mac;
-    }
-
-
-    public static String getIpAsString() {
-
-        String ip = "";
-
-        try {
-            Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface.getNetworkInterfaces();
-
-            while (enumNetworkInterfaces.hasMoreElements()) {
-
-                NetworkInterface networkInterface        = enumNetworkInterfaces.nextElement();
-                Enumeration <InetAddress>enumInetAddress = networkInterface.getInetAddresses();
-
-                while (enumInetAddress.hasMoreElements()) {
-
-                    InetAddress inetAddress = enumInetAddress.nextElement();
-
-                    if (inetAddress.isSiteLocalAddress()) {
-                        ip = inetAddress.getHostAddress();
-                    }
-                }
-            }
-
-        } catch (SocketException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            ip += "Something Wrong! " + e.toString() + "\n";
-        }
-
-        return ip;
-    }
-
-    public static byte[] getIpAddress() {
-
-        String ip = getIpAsString();
-
-        String[] ipArray = ip.split("\\.");
-        byte[]   ipAddr  = new byte[4];
-
-        for(int i1 = 0 ; i1 < ipArray.length ; i1++ ) {
-
-            ipAddr[i1] = (byte)parseInt(ipArray[i1]);
-        }
-
-        return ipAddr;
-    }
 }

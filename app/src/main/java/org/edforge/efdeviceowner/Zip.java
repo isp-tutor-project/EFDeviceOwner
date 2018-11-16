@@ -3,6 +3,7 @@ package org.edforge.efdeviceowner;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import org.edforge.util.TCONST;
 
@@ -30,6 +31,9 @@ public class Zip {
     protected String quality;
 
     static String[] ZIPIGNORE = {};
+
+    private static final String TAG = "EFZip";
+
 
 
     private Context mContext;
@@ -107,10 +111,12 @@ public class Zip {
         int  fileCnt   = 0;
 
         if(!targetDir.exists() && !targetDir.mkdirs()){
+            Log.d(TAG, "Unable to create directory");
             throw new IOException("Unable to create directory");
         }
 
         if(!targetDir.isDirectory()){
+            Log.d(TAG, "Unable to extract to a non-directory");
             throw new IOException("Unable to extract to a non-directory");
         }
 
@@ -132,6 +138,7 @@ public class Zip {
 				File newDir = new File(path);
 
 				if(!newDir.exists() && !newDir.mkdirs()){
+                    Log.d(TAG, "Unable to extract the zip entry " + path);
 					throw new IOException("Unable to extract the zip entry " + path);
 				}
             }
@@ -145,10 +152,12 @@ public class Zip {
                 File outputDir = new File(outputFile.getParent());
 
                 if(!outputDir.exists() && !outputDir.mkdirs()){
+                    Log.d(TAG, "unable to make directory for entry " + path);
                     throw new IOException("unable to make directory for entry " + path);
                 }
 
                 if(!outputFile.exists() && !outputFile.createNewFile()){
+                    Log.d(TAG, "Unable to create directory for " + path);
                     throw new IOException("Unable to create directory for " + path);
                 }
 

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import static org.edforge.util.TCONST.INSTALLATION_COMPLETE;
 import static org.edforge.util.TCONST.INSTALLATION_PENDING;
 
 /**
@@ -203,7 +204,9 @@ public class CCommandProcessor {
                     Log.i(TAG, "Extracting Data");
                     mZip = new Zip(mContext);
                     mZip.open(mTmpPath);
+                    broadcast(INSTALLATION_PENDING);
                     mZip.extractAll(mTmpPath, mOutPath);
+                    broadcast(INSTALLATION_COMPLETE);
                 }
 
                 if (mCommand.app_package != null && mCommand.command.equals(TCONST.INSTALL)) {

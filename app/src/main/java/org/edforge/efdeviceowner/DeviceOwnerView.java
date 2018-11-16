@@ -33,6 +33,7 @@ public class DeviceOwnerView extends FrameLayout {
     private IEdForgeLauncher  mCallback;
 
     private TextView        Sstatus;
+    private TextView        Sid;
     private Button          SuserMode;
     private Button          SslaveMode;
     private Button          SsetupMode;
@@ -91,6 +92,9 @@ public class DeviceOwnerView extends FrameLayout {
         super.onFinishInflate();
 
         Sstatus = (TextView) findViewById(R.id.Sstatus);
+        Sid     = (TextView) findViewById(R.id.Sid);
+
+        Sid.setText(OwnerActivity.VERSION_EDFORGE);
 
         SbreakOutButton = (Button) findViewById(R.id.SbreakButton);
         SbreakOutButton.setOnClickListener(new View.OnClickListener() {

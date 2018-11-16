@@ -42,12 +42,14 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import org.edforge.efdeviceowner.net.CCommandProcessor;
+import org.edforge.efdeviceowner.net.EFNetManager;
 import org.edforge.util.TCONST;
+
+import java.util.ArrayList;
 
 import static org.edforge.efdeviceowner.PlugStatusReceiver.PLUG_CONNECT_STATE;
 import static org.edforge.efdeviceowner.PlugStatusReceiver.PLUG_PREFS;
 import static org.edforge.util.TCONST.ANDROID_BREAK_OUT;
-import static org.edforge.util.TCONST.ASUSDEF_LAUNCHER;
 import static org.edforge.util.TCONST.EFHOME_LAUNCH_INTENT;
 import static org.edforge.util.TCONST.EFHOME_PACKAGE;
 import static org.edforge.util.TCONST.EFHOME_STARTER_INTENT;
@@ -63,6 +65,8 @@ import static org.edforge.util.TCONST.WIPE_DEVICE;
 // adb shell dpm set-device-owner "org.edforge.efdeviceowner/.DeviceOwnerReceiver"
 // adb shell dpm remove-active-admin "org.edforge.efdeviceowner/org.edforge.efdeviceowner.DeviceOwnerReceiver"
 // adb install -r -t EFdeviceOwner.apk
+// adb install -r -t app-release.apk
+// adb uninstall org.edforge.efdeviceowner
 
 // Default tablet launcher | com.asus.launcher/com.android.launcher3.Launcher
 
@@ -80,10 +84,14 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
     private SlaveModeView       slaveModeView;
     private View                mCurrView = null;
 
+    static public String        VERSION_EDFORGE;
+    static public ArrayList     VERSION_SPEC;
+
 
     private String mPackage;
     private ComponentName       mAdminComponentName;
     private ActivityManager     mActivityManager;
+    private EFNetManager        mNetManager;
     private DevicePolicyManager mDevicePolicyManager;
     private LauncherManager     mLauncherManager;
     private PostProvisioning    mProvisioningManager;
@@ -91,7 +99,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
     private ComponentName       mDeviceAdmin;
     private SharedPreferences   mSharedPrefs;
     private PackageManager      mPackageManager;
-    private boolean             mInLockTask = false;
+    private boolean             mInLockTask = true;
     private boolean             mHomeAvail  = false;
 
     private boolean isInBreakOut = false;
@@ -125,12 +133,15 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
         mSharedPrefs         = getSharedPreferences(PLUG_PREFS, Context.MODE_PRIVATE);
         mProvisioningManager = new PostProvisioning(this);
         mActivityManager     = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        mNetManager          = EFNetManager.getInstance(this);
         mAdminComponentName  = DeviceOwnerReceiver.getComponentName(this);
         mDevicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         mLauncherManager     = new LauncherManager(this);
         mCommandProcessor    = new CCommandProcessor(this);
         mPackage             = getApplicationContext().getPackageName();
         mPackageManager      = getPackageManager();
+
+        mSharedPrefs.edit().putBoolean(PLUG_CONNECT_STATE, true).commit();
 
         if (mDevicePolicyManager.isDeviceOwnerApp(mPackage)) {
 
@@ -140,6 +151,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
         // Capture the local broadcast manager
         bManager = LocalBroadcastManager.getInstance(this);
+        VERSION_EDFORGE   = BuildConfig.VERSION_NAME;
 
         IntentFilter filter = new IntentFilter(TCONST.LAUNCH_SETTINGS);
         filter.addAction(TCONST.SLAVE_MODE);
@@ -202,6 +214,10 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
         } catch (PackageManager.NameNotFoundException e) {
         }
 
+//        DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+//
+//        dpm.clearDeviceOwnerApp(context.getPackageName());
+
         return false;
     }
 
@@ -232,7 +248,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
         mHomeAvail = testPackageInstalled(EFHOME_PACKAGE);
 
-        enterLockTask();
+//        enterLockTask();
         setFullScreen();
 
         if(isPlugConnected() || isInBreakOut || !mHomeAvail) {
@@ -442,6 +458,8 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
                 case TCONST.GO_HOME:
 
+//                    startLockTask();
+
                     // Allow the screen to sleep when not in a session
                     //
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -459,6 +477,9 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
                     break;
 
                 case TCONST.SLAVE_MODE:
+
+//                    stopLockTask();
+
                     // Disable screen sleep while in a session
                     //
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -497,9 +518,13 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
                     break;
 
                 case TCONST.ANDROID_BREAK_OUT:
+
                     exitLockTask();
-                    mLauncherManager.setPreferredLauncher(ASUSDEF_LAUNCHER);
-                    rebootDevice();
+//                    mLauncherManager.setPreferredLauncher(ASUSDEF_LAUNCHER);
+                    mLauncherManager.clearPreferredLauncher();
+                    startActivity(Util.getHomeLaunchIntent());
+//                    rebootDevice();
+                    finish();
                     break;
 
                 case TCONST.REBOOT_DEVICE:
