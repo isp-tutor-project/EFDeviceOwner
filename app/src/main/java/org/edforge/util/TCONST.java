@@ -78,6 +78,7 @@ public class TCONST {
     public static final String PULL         = "PULL";
     public static final String PUSH         = "PUSH";
     public static final String INSTALL      = "INSTALL";
+    public static final String CLEAN        = "CLEAN";
 
     public static final String EDFORGEZIPTEMP = "efztempfile.zip";
 
@@ -130,8 +131,8 @@ public class TCONST {
     public static final String EFHOME_FINISHER_INTENT   = "org.edforge.efhomescreen.EFHOME_FINISHER_INTENT";
     public static final String EFHOME_STARTER_INTENT    = "org.edforge.efhomescreen.EFHOME_STARTER_INTENT";
 
-    public static final String INSTALLATION_PENDING    = "INSTALLATION_PENDING";
-    public static final String INSTALLATION_COMPLETE   = "INSTALLATION_COMPLETE";
+    public static final String INSTALLATION_PENDING    = "org.edforge.INSTALLATION_PENDING";
+    public static final String INSTALLATION_COMPLETE   = "org.edforge.INSTALLATION_COMPLETE";
 
     public static final String POST_PROV_PREFS     = "post_prov_prefs";
     public static final String KEY_POST_PROV_DONE  = "key_post_prov_done";

@@ -67,8 +67,21 @@ import static org.edforge.util.TCONST.WIPE_DEVICE;
 // adb install -r -t EFdeviceOwner.apk
 // adb install -r -t app-release.apk
 // adb uninstall org.edforge.efdeviceowner
+//
+// See: https://stackoverflow.com/questions/2442713/view-the-tasks-activity-stack
+// adb shell dumpsys activity activities | sed -En -e '/Stack #/p' -e '/Running activities/,/Run #0/p'
 
 // Default tablet launcher | com.asus.launcher/com.android.launcher3.Launcher
+
+// Kill an app from adb
+//adb shell pm clear com.my.app.package
+
+// switching to TCPIP adb
+// adb tcpip 5555
+// adb connect 192.168.2.23
+//
+// switching back to usb debugging
+// adb usb
 
 public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
@@ -128,7 +141,9 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
         FrameLayout.LayoutParams params;
 
-        super.onCreate(savedInstanceState);
+        // Note = we don't want the system to try and recreate any of our views- always pass null
+        //
+        super.onCreate(null);
 
         mSharedPrefs         = getSharedPreferences(PLUG_PREFS, Context.MODE_PRIVATE);
         mProvisioningManager = new PostProvisioning(this);
@@ -163,7 +178,6 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
         filter.addAction(TCONST.WIPE_DEVICE);
         filter.addAction(TCONST.GO_HOME);
         filter.addAction(TCONST.ANDROID_BREAK_OUT);
-        filter.addAction(TCONST.SETUP_MODE);
         filter.addAction(USER_MODE);
         filter.addAction(EFHOME_STARTER_INTENT);
 
@@ -204,6 +218,14 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
             broadcast(SYSTEM_STATUS, "Google Owns Device");
         }
+    }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+
     }
 
     private boolean testPackageInstalled(String uri) {
@@ -248,12 +270,13 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
         mHomeAvail = testPackageInstalled(EFHOME_PACKAGE);
 
-//        enterLockTask();
         setFullScreen();
 
+        // Note this may be called several times for a single restart so we can't reset
+        // isInBreakOut = false; here or it will go to user_mode if unplugged.
+        //
         if(isPlugConnected() || isInBreakOut || !mHomeAvail) {
             switchView(deviceOwnerView);
-            isInBreakOut = false;
         }
         else {
             broadcast(USER_MODE);
@@ -364,6 +387,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
         switch (requestCode) {
             case 100:
                 isInBreakOut = true;
+                Log.d(TAG, "BreakOut Selected");
                 break;
 
             default:
@@ -467,15 +491,15 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
                     switchView(deviceOwnerView);
                     break;
 
-                case TCONST.SETUP_MODE:
-                    // Disable screen sleep while in a session
-                    //
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-                    switchView(slaveModeView);
-                    slaveModeView.startClient();
-                    break;
-
+//                case TCONST.SETUP_MODE:
+//                    // Disable screen sleep while in a session
+//                    //
+//                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//
+//                    switchView(slaveModeView);
+//                    slaveModeView.startClient();
+//                    break;
+//
                 case TCONST.SLAVE_MODE:
 
 //                    stopLockTask();
@@ -492,9 +516,10 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
                 case EFHOME_STARTER_INTENT:
                     mHomeAvail = testPackageInstalled(EFHOME_PACKAGE);
 
-                    if(mHomeAvail)
+                    if(mHomeAvail) {
+                        isInBreakOut = false;
                         startActivityForResult(getIntent(EFHOME_LAUNCH_INTENT), 100);
-//                        startActivity(getIntent(EFHOME_LAUNCH_INTENT));
+                    }
                     break;
 
                 case TCONST.LAUNCH_SETTINGS:
@@ -538,6 +563,16 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
                     break;
             }
         }
+    }
+
+
+    /**
+     * TODO: TEST
+     */
+    @Override
+    public void onBackPressed() {
+
+        setFullScreen();
     }
 
 

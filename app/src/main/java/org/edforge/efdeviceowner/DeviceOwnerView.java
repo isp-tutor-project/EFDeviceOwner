@@ -36,7 +36,6 @@ public class DeviceOwnerView extends FrameLayout {
     private TextView        Sid;
     private Button          SuserMode;
     private Button          SslaveMode;
-    private Button          SsetupMode;
     private Button          Swipebutton;
     private Button          SsettingsButton;
     private Button          SEFhomeButton;
@@ -100,13 +99,6 @@ public class DeviceOwnerView extends FrameLayout {
         SbreakOutButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 broadcast(REQ_ANDROID_BREAKOUT);
-            }
-        });
-
-        SsetupMode = (Button) findViewById(R.id.SsetupMode);
-        SsetupMode.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                broadcast(SETUP_MODE);
             }
         });
 

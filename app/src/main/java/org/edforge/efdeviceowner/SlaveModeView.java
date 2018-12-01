@@ -52,6 +52,7 @@ public class SlaveModeView extends FrameLayout implements IThreadComplete {
     private TextView        SslaveStatus;
     private Button          bHome;
 
+    private boolean               isInitialized = false;
     private LocalBroadcastManager bManager;
     private slaveViewReceiver     bReceiver;
 
@@ -84,19 +85,24 @@ public class SlaveModeView extends FrameLayout implements IThreadComplete {
 
         mContext = context;
 
-        // Capture the local broadcast manager
-        bManager     = LocalBroadcastManager.getInstance(mContext);
-        mNetManager  = EFNetManager.getInstance();
+        if(!isInitialized) {
 
-        IntentFilter filter = new IntentFilter(SYSTEM_STATUS);
-        filter.addAction(NET_SWITCH_SUCESS);
-        filter.addAction(NET_SWITCH_FAILED);
-        filter.addAction(NET_STATUS);
-        filter.addAction(INSTALLATION_PENDING);
-        filter.addAction(INSTALLATION_COMPLETE);
+            isInitialized = true;
 
-        bReceiver = new slaveViewReceiver();
-        bManager.registerReceiver(bReceiver, filter);
+            // Capture the local broadcast manager
+            bManager = LocalBroadcastManager.getInstance(mContext);
+            mNetManager = EFNetManager.getInstance();
+
+            IntentFilter filter = new IntentFilter(SYSTEM_STATUS);
+            filter.addAction(NET_SWITCH_SUCESS);
+            filter.addAction(NET_SWITCH_FAILED);
+            filter.addAction(NET_STATUS);
+            filter.addAction(INSTALLATION_PENDING);
+            filter.addAction(INSTALLATION_COMPLETE);
+
+            bReceiver = new slaveViewReceiver();
+            bManager.registerReceiver(bReceiver, filter);
+        }
     }
 
 

@@ -122,24 +122,31 @@ public class CServer {
 
             } catch (IOException e) {
                 e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
             while (!Thread.currentThread().isInterrupted()) {
 
                 try {
 
-                    broadcast(NET_STATUS, "Waiting for connection:");
+                    if(serverSocket != null) {
+                        broadcast(NET_STATUS, "Waiting for connection:");
 
-                    socket = serverSocket.accept();
+                        socket = serverSocket.accept();
 
-                    broadcast(NET_STATUS, "connected");
+                        broadcast(NET_STATUS, "connected");
 
-                    CommunicationThread commThread = new CommunicationThread(socket);
+                        CommunicationThread commThread = new CommunicationThread(socket);
 
-                    mClientThread = new Thread(commThread);
-                    mClientThread.start();
+                        mClientThread = new Thread(commThread);
+                        mClientThread.start();
+                    }
+                    else {
+                        broadcast(NET_STATUS, "Server Socket Failed to Connect");
+                        Thread.currentThread().interrupt();
+                    }
 
                 } catch (IOException e) {
-
+                    e.printStackTrace();
                     Thread.currentThread().interrupt();
                 }
             }
@@ -313,10 +320,9 @@ public class CServer {
 
                                 case TCONST.PUSH:
                                 case TCONST.INSTALL:
+                                case TCONST.CLEAN:
                                     broadcast(NET_STATUS, "Processing: " + mCommand.command + " : " + mCommand.to );
                                     break;
-
-
                             }
 
                             serverState = TCONST.PROCESS_COMMAND;
@@ -336,7 +342,7 @@ public class CServer {
 
                         // Will transition to either
                         //
-                        //        COMMAND_SENDSTART  or COMMAND_RECVSTART
+                        //        COMMAND_SENDSTART  or COMMAND_RECVSTART  or COMMAND_WAIT
                         //
                         serverState = mProcessor.process(mCommand);
 

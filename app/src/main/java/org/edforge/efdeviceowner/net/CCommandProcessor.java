@@ -23,6 +23,7 @@ import java.io.OutputStream;
 
 import static org.edforge.util.TCONST.INSTALLATION_COMPLETE;
 import static org.edforge.util.TCONST.INSTALLATION_PENDING;
+import static org.edforge.util.TCONST.NET_STATUS;
 
 /**
  * Created by kevin on 10/21/2018.
@@ -83,11 +84,55 @@ public class CCommandProcessor {
             case TCONST.INSTALL:
                 result = TCONST.COMMAND_RECVSTART;
                 break;
+
+            case TCONST.CLEAN:
+
+                File Clean_Path = new File(Environment.getExternalStorageDirectory() + mCommand.to);
+
+                cleanDirectory(Clean_Path);
+                broadcast(NET_STATUS, "Folder Cleared");
+
+                result = TCONST.COMMAND_WAIT;
+                break;
         }
 
         return result;
     }
 
+
+    public static void removeDirectory(File dir) {
+
+        if (dir.isDirectory()) {
+
+            File[] files = dir.listFiles();
+
+            if (files != null && files.length > 0) {
+
+                for (File aFile : files) {
+                    removeDirectory(aFile);
+                }
+            }
+            dir.delete();
+
+        } else {
+            dir.delete();
+        }
+    }
+
+    public static void cleanDirectory(File dir) {
+
+        if (dir.isDirectory()) {
+
+            File[] files = dir.listFiles();
+
+            if (files != null && files.length > 0) {
+
+                for (File aFile : files) {
+                    removeDirectory(aFile);
+                }
+            }
+        }
+    }
 
     private String cleanTempPath() {
 
@@ -338,6 +383,14 @@ public class CCommandProcessor {
         } catch (Exception e) {
             System.out.println("INFO: File Copy Failed: " + inputPath + " - reason: " + e);
         }
+    }
+
+    public void broadcast(String Action, String Msg) {
+
+        Intent msg = new Intent(Action);
+        msg.putExtra(TCONST.NAME_FIELD, Msg);
+
+        bManager.sendBroadcast(msg);
     }
 
 
