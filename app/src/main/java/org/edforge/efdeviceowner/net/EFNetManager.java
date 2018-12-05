@@ -28,6 +28,7 @@ public class EFNetManager {
     private       LocalBroadcastManager     bManager;
     private       StateReceiver             bReceiver;
     private       EFWifiManager             mWIFImanager;
+    private       boolean                   isInitialized = false;
 
     public static final String ETHERNET = "Ethernet";
     public static final String WIFI     = "WiFi";
@@ -50,33 +51,50 @@ public class EFNetManager {
     public static EFNetManager getInstance(Context context) {
 
         ourInstance.mContext = context;
+
         ourInstance.init();
 
         return ourInstance;
     }
 
+
     private EFNetManager() {
     }
 
-    public void onDestroy() {
 
-        mContext.unregisterReceiver(bReceiver);
+    //    TODO: Need to unregister receiver
+    //
+    private void init() {
+
+        if(!ourInstance.isInitialized) {
+
+            ourInstance.isInitialized = true;
+
+            mWIFImanager = new EFWifiManager(mContext);
+
+            // Capture the local broadcast manager
+            bManager = LocalBroadcastManager.getInstance(mContext);
+
+            IntentFilter filter = new IntentFilter(CONNECTIVITY_ACTION);
+            filter.addAction(CONNECTIVITY_ACTION);
+
+            ourInstance.bReceiver = new StateReceiver();
+
+            mContext.registerReceiver(ourInstance.bReceiver, filter);
+        }
     }
 
 
-    private void init() {
+    public void onDestroy() {
 
-        mWIFImanager = new EFWifiManager(mContext);
+        if(ourInstance.isInitialized) {
 
-        // Capture the local broadcast manager
-        bManager = LocalBroadcastManager.getInstance(mContext);
+            mWIFImanager.onDestroy();
+            mWIFImanager = null;
 
-        IntentFilter filter = new IntentFilter(CONNECTIVITY_ACTION);
-        filter.addAction(CONNECTIVITY_ACTION);
-
-        ourInstance.bReceiver = new StateReceiver();
-
-        mContext.registerReceiver(ourInstance.bReceiver, filter);
+            ourInstance.isInitialized = false;
+            mContext.unregisterReceiver(bReceiver);
+        }
     }
 
 

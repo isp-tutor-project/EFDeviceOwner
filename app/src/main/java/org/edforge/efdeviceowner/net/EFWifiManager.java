@@ -25,7 +25,8 @@ public class EFWifiManager {
 
     private final Context mContext;
 
-    private String mSSID = "\"EdForge\"";
+    private boolean isInitialized = false;
+    private String  mSSID = "\"EdForge\"";
 
     private String mNetworkSSID = "EdForge";
     private String mNetworkPass = "";
@@ -71,6 +72,12 @@ public class EFWifiManager {
 
         mWifiManager.addNetwork(mConf);
     }
+
+
+    public void onDestroy() {
+
+    }
+
 
     private String SSID(String target) {
 

@@ -50,6 +50,7 @@ import java.util.ArrayList;
 import static org.edforge.efdeviceowner.PlugStatusReceiver.PLUG_CONNECT_STATE;
 import static org.edforge.efdeviceowner.PlugStatusReceiver.PLUG_PREFS;
 import static org.edforge.util.TCONST.ANDROID_BREAK_OUT;
+import static org.edforge.util.TCONST.ASUSDEF_LAUNCHER;
 import static org.edforge.util.TCONST.EFHOME_LAUNCH_INTENT;
 import static org.edforge.util.TCONST.EFHOME_PACKAGE;
 import static org.edforge.util.TCONST.EFHOME_STARTER_INTENT;
@@ -60,6 +61,15 @@ import static org.edforge.util.TCONST.REBOOT_DEVICE;
 import static org.edforge.util.TCONST.SYSTEM_STATUS;
 import static org.edforge.util.TCONST.USER_MODE;
 import static org.edforge.util.TCONST.WIPE_DEVICE;
+
+// Note: To switch from non-test buile to test build you need to do the following
+//
+// 1. Force install a test build using  adb install -r -t EFdeviceOwner.apk
+// 2. Remove the current device-woner - adb shell dpm remove-active-admin "org.edforge.efdeviceowner/org.edforge.efdeviceowner.DeviceOwnerReceiver"
+//
+// You may then install debug signed deviceowner apks.
+//
+
 
 // ADB (on all versions of Android):
 // adb shell dpm set-device-owner "org.edforge.efdeviceowner/.DeviceOwnerReceiver"
@@ -247,6 +257,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
     protected void onDestroy() {
         super.onDestroy();
         bManager.unregisterReceiver(bReceiver);
+        mNetManager.onDestroy();
     }
 
     @Override
@@ -545,8 +556,8 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
                 case TCONST.ANDROID_BREAK_OUT:
 
                     exitLockTask();
-//                    mLauncherManager.setPreferredLauncher(ASUSDEF_LAUNCHER);
-                    mLauncherManager.clearPreferredLauncher();
+//                    mLauncherManager.clearPreferredLauncher();
+                    mLauncherManager.setPreferredLauncher(ASUSDEF_LAUNCHER);
                     startActivity(Util.getHomeLaunchIntent());
 //                    rebootDevice();
                     finish();

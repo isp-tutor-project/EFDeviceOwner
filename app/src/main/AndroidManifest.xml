@@ -19,7 +19,7 @@
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:testOnly="false">
+        android:testOnly="true">
 
         <!--Note: android:testOnly cannot be true for a successful Live QR provisioning attempt  -->
         <!--Note: When false you will be unable to factory reset the device until you push a new -->
