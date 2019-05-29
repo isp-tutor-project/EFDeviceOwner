@@ -62,7 +62,7 @@ import static org.edforge.util.TCONST.SYSTEM_STATUS;
 import static org.edforge.util.TCONST.USER_MODE;
 import static org.edforge.util.TCONST.WIPE_DEVICE;
 
-// Note: To switch from non-test buile to test build you need to do the following
+// Note: To switch from non-test build to test build you need to do the following
 //
 // 1. Force install a test build using  adb install -r -t EFdeviceOwner.apk
 // 2. Remove the current device-woner - adb shell dpm remove-active-admin "org.edforge.efdeviceowner/org.edforge.efdeviceowner.DeviceOwnerReceiver"
@@ -105,6 +105,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
     private BreakOutView        breakOutView;
     private DeviceOwnerView     deviceOwnerView;
     private SlaveModeView       slaveModeView;
+    private DefInstructionView  defConditionView;
     private View                mCurrView = null;
 
     static public String        VERSION_EDFORGE;
@@ -180,6 +181,7 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
 
         IntentFilter filter = new IntentFilter(TCONST.LAUNCH_SETTINGS);
         filter.addAction(TCONST.SLAVE_MODE);
+        filter.addAction(TCONST.COND_MODE);
         filter.addAction(TCONST.SET_HOME_APP);
         filter.addAction(TCONST.REQ_REBOOT_DEVICE);
         filter.addAction(TCONST.REQ_WIPE_DEVICE);
@@ -217,6 +219,10 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
         slaveModeView = (SlaveModeView) mInflater.inflate(R.layout.slave_mode_view, null);
         params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         slaveModeView.setLayoutParams(params);
+
+        defConditionView = (DefInstructionView) mInflater.inflate(R.layout.default_instruction_view, null);
+        params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+        defConditionView.setLayoutParams(params);
 
         if (mDevicePolicyManager.isDeviceOwnerApp(mPackage)) {
 
@@ -522,6 +528,15 @@ public class OwnerActivity extends Activity implements IEdForgeLauncher {
                     switchView(slaveModeView);
                     slaveModeView.startServer();
                     break;
+
+                case TCONST.COND_MODE:
+
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+                    defConditionView.configView();
+                    switchView(defConditionView);
+                    break;
+
 
                 case USER_MODE:
                 case EFHOME_STARTER_INTENT:

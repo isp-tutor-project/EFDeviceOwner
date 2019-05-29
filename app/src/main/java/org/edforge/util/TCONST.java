@@ -32,6 +32,7 @@ public class TCONST {
     public static final String EDFORGE_DATA_FOLDER    = "/EdForge_DATA/";
     public static final String EDFORGE_DATA_TRANSFER  = "/EdForge_XFER/";
 
+    public static final String INSTR_CONFIG           = "tutor_instrseq_config.json";
 
     // data sources
     public static final String ASSETS          = "ASSETS";
@@ -86,6 +87,7 @@ public class TCONST {
     public static final String SYSTEM_STATUS        = "SYSTEM_STATUS";
     public static final String SLAVE_MODE           = "SLAVE_MODE";
     public static final String USER_MODE            = "USER_MODE";
+    public static final String COND_MODE            = "COND_MODE";
 
     public static final String LAUNCH_SETTINGS      = "LAUNCH_SETTINGS";
     public static final String SET_HOME_APP         = "SET_HOME_APP";

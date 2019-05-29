@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import org.edforge.util.TCONST;
 
+import static org.edforge.util.TCONST.COND_MODE;
 import static org.edforge.util.TCONST.LAUNCH_SETTINGS;
 import static org.edforge.util.TCONST.REQ_ANDROID_BREAKOUT;
 import static org.edforge.util.TCONST.REQ_REBOOT_DEVICE;
@@ -34,6 +35,7 @@ public class DeviceOwnerView extends FrameLayout {
 
     private TextView        Sstatus;
     private TextView        Sid;
+    private Button          ScondMode;
     private Button          SuserMode;
     private Button          SslaveMode;
     private Button          Swipebutton;
@@ -113,6 +115,13 @@ public class DeviceOwnerView extends FrameLayout {
         SuserMode.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 broadcast(USER_MODE);
+            }
+        });
+
+        ScondMode = (Button) findViewById(R.id.ScondMode);
+        ScondMode.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                broadcast(COND_MODE);
             }
         });
 

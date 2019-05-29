@@ -67,6 +67,20 @@
                 android:textColor="@android:color/background_light"
                 android:textSize="30sp"
                 android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/ScondMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
+                android:padding="30dp"
+                android:text="Default Condition"
+                android:textColor="@android:color/background_light"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
         </LinearLayout>
 
         <LinearLayout
